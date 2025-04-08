@@ -66,19 +66,21 @@ const Navbar: React.FC = () => {
             >
               Home
             </Link>
-            <Link
-              to="/dashboard"
-              onClick={() => setIsMobileMenuOpen(false)} // Close menu on click
-              className="block text-md text-gray-200 hover:text-accent transition duration-300 mb-2"
-            >
-              Dashboard
-            </Link>
+
             <Link
               to="/register"
               onClick={() => setIsMobileMenuOpen(false)} // Close menu on click
               className="block text-md text-gray-200 hover:text-accent transition duration-300"
             >
               Register
+            </Link>
+
+            <Link
+              to="/login"
+              onClick={() => setIsMobileMenuOpen(false)} // Close menu on click
+              className="block text-md text-gray-200 hover:text-accent transition duration-300 mb-2"
+            >
+              Login
             </Link>
           </div>
         )}
