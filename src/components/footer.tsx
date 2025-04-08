@@ -16,16 +16,16 @@ const Footer: React.FC = () => {
           {/* Column 1: About */}
           <div>
             <h4 className="text-xl font-semibold text-white mb-4">
-              About Kaadi
+              About Kaad
             </h4>
             <p className="text-gray-400">
-              Kaadi is your go-to platform for creating and sharing virtual
+              Kaad is your go-to platform for creating and sharing virtual
               business cards effortlessly. Stand out in the digital world.
             </p>
           </div>
 
           {/* Column 2: Quick Links */}
-          <div>
+          {/* <div>
             <h4 className="text-xl font-semibold text-white mb-4">
               Quick Links
             </h4>
@@ -51,10 +51,10 @@ const Footer: React.FC = () => {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Column 3: Social Media */}
-          <div>
+          {/* <div>
             <h4 className="text-xl font-semibold text-white mb-4">Follow Us</h4>
             <div className="flex space-x-4">
               <a
@@ -90,13 +90,13 @@ const Footer: React.FC = () => {
                 <FontAwesomeIcon icon={faLinkedin} size="2x" />
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Bottom Section */}
         <div className="border-t border-gray-700 pt-6 text-center">
           <p className="text-gray-400">
-            &copy; {new Date().getFullYear()} Kaadi. All rights reserved.
+            &copy; {new Date().getFullYear()} Kaad. All rights reserved.
           </p>
         </div>
       </div>

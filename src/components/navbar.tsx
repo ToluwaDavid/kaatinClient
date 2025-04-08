@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="text-3xl font-bold">
             <Link to="/">
-              K<span className="text-accent">aa</span>tin
+              K<span className="text-accent">aa</span>d
             </Link>
           </div>
 
