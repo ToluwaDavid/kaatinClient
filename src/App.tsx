@@ -15,6 +15,12 @@ import Dashboard from "./pages/Dashboard";
 import Navbarnew from "./components/navbarnew";
 import Hero from "./pages/hero";
 import Landingnew from "./pages/Landingnew";
+import SharedCard from "./pages/ShareCard"; // 👈 Create this component
+import RecoverPassword from "./pages/RecoverPassword";
+
+import { ToastContainer } from "react-toastify"; // ✅ add this
+import "react-toastify/dist/ReactToastify.css"; // ✅ make sure it's imported
+import { fetchProfile } from "./store/slices/authSlice";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -26,24 +32,30 @@ const App: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       setAuthToken(token);
-      dispatch(fetchCards());
+      dispatch(fetchProfile());
     }
   }, [dispatch]);
 
   // Render the Router with Routes
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/newnav" element={<Navbarnew />} />
-        <Route path="/hero" element={<Hero />} />
-        <Route path="/landingnew" element={<Landingnew />} />
-        {/* {isAuthenticated && <Route path="/dashboard" element={<Dashboard />} />} */}
-      </Routes>
-    </Router>
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/newnav" element={<Navbarnew />} />
+          <Route path="/hero" element={<Hero />} />
+          <Route path="/landingnew" element={<Landingnew />} />
+          <Route path="/card/:email" element={<SharedCard />} />
+          <Route path="/recover" element={<RecoverPassword />} />
+          {/* <Route path="/card/:email" element={<SharedCard />} /> */}
+          {/* {isAuthenticated && <Route path="/dashboard" element={<Dashboard />} />} */}
+        </Routes>
+      </Router>
+      <ToastContainer position="top-center" autoClose={3000} />
+    </>
   );
 };
 

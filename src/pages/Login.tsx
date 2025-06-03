@@ -1,18 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Input from "../components/input";
 import Button from "../components/button";
 import { login } from "../store/slices/authSlice";
-import { useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import Navbar from "../components/navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const {
+    isAuthenticated,
+    loading,
+    error: authError,
+  } = useAppSelector((state) => state.auth);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  //Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,10 +42,13 @@ const Login = () => {
       return;
     }
     setError(null);
+
     try {
       await dispatch(login({ email, password })).unwrap();
-    } catch (err) {
-      setError("Invalid credentials");
+      toast.success("🚀 Logged in successfully!");
+    } catch (err: any) {
+      //setError("Invalid credentials");
+      toast.error(err || "❌ Invalid credentials");
     }
   };
 
@@ -40,11 +60,11 @@ const Login = () => {
       <div className="min-h-screen flex items-center justify-center bg-primary text-textPrimary">
         <div className="w-full max-w-md p-6">
           <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
-          <p className="text-accent font-bold text-sm text-center mb-4">
+          {/* <p className="text-accent font-bold text-sm text-center mb-4">
             Login to your account using one of the login options below:
-          </p>
+          </p> */}
           {error && <p className="text-red-500 mb-4">{error}</p>}
-
+          {authError && <p className="text-red-500 mb-4">{authError}</p>}
           <form onSubmit={handleSubmit}>
             <Input
               label="Email"
@@ -52,6 +72,7 @@ const Login = () => {
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder={"Youremail@mail.com"}
             />
             <Input
               label="Password"
@@ -59,13 +80,16 @@ const Login = () => {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder={"Enter your password here"}
             />
             <div className="mt-6">
-              <Button type="submit">Login</Button>
+              <Button type="submit">
+                {loading ? "Loggin in..." : "Login"}
+              </Button>
             </div>
           </form>
-          <div className="mt-4">Or</div>
-          <div className="mt-4">
+          {/* <div className="mt-4">Or</div> */}
+          {/* <div className="mt-4">
             <Button onClick={() => {}} type="submit">
               <FontAwesomeIcon
                 icon={faGoogle}
@@ -73,7 +97,7 @@ const Login = () => {
               />
               Login with Google
             </Button>
-          </div>
+          </div> */}
           <div className="mt-4">
             <h6>
               Don't have an account ?{" "}

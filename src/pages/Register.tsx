@@ -1,74 +1,233 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Input from "../components/input";
 import Button from "../components/button";
 import Navbar from "../components/navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { register } from "../store/slices/authSlice";
+import { toast } from "react-toastify";
+import slugify from "slugify"; // npm i slugify (for optional slug support)
 
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+    company: "",
+    address: "",
+    phone: "",
+    website: "",
+    secretAnswer: "",
+  });
+
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields");
+
+    const {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
+      role,
+      company,
+      address,
+      phone,
+      secretAnswer,
+      website,
+    } = formData;
+
+    // Validate required fields
+    if (
+      !firstname ||
+      !lastname ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !role ||
+      !company ||
+      !address ||
+      !phone ||
+      !secretAnswer
+    ) {
+      setError("Please fill in all required fields (website is optional).");
+      toast.error(
+        "⚠️ Please fill in all required fields (website is optional)."
+      );
       return;
     }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      toast.error("❌ Passwords do not match");
       return;
     }
-    setError("");
-    //Perform login for registration here
+
+    setError(null);
+
+    const slug = slugify(`${firstname}-${lastname}`, { lower: true });
+
+    try {
+      await dispatch(
+        register({
+          firstname,
+          lastname,
+          email,
+          password,
+          role,
+          company,
+          address,
+          phone,
+          website,
+          secretAnswer,
+          slug,
+        })
+      ).unwrap();
+
+      toast.success("🚀 Account created successfully!");
+    } catch (error: any) {
+      toast.error(error || "❌ Registration failed");
+    }
   };
 
   return (
     <div>
-      <div>
-        <Navbar />
-      </div>
+      <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-primary text-textPrimary">
-        <div className="w-full max-w-md p-6">
-          <h2 className="text-3xl font-bold mb-6 text-center">Register</h2>
+        <div className="w-full max-w-md">
+          <h2 className="text-3xl font-bold mb-2 text-center">Register</h2>
+          <p className="text-sm mb-4 text-center text-accent font-medium">
+            Fields marked <span className="text-red-400 font-bold">*</span> are
+            required.
+          </p>
+
           {error && <p className="text-red-500 mb-4">{error}</p>}
-          <form onSubmit={handleRegister}>
+
+          <form onSubmit={handleRegister} className="">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="First Name *"
+                name="firstname"
+                value={formData.firstname}
+                onChange={handleChange}
+                type="text"
+                placeholder={"Your firstname here"}
+              />
+              <Input
+                label="Last Name *"
+                name="lastname"
+                value={formData.lastname}
+                onChange={handleChange}
+                type="text"
+                placeholder={"Your last name here"}
+              />
+            </div>
+
             <Input
-              label="Email"
-              type="email"
+              label="Email Address *"
               name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
+              type="email"
+              placeholder={"youremail@email.com"}
             />
             <Input
-              label="Password"
+              label="Phone Number *"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              type="text"
+              placeholder={"Valid work phone number"}
+            />
+
+            <Input
+              label="Job Role / Title *"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              type="text"
+              placeholder={"Your Job Role / Title "}
+            />
+            <Input
+              label="Company Name *"
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              type="text"
+              placeholder={"Your Company Name"}
+            />
+            <Input
+              label="Company Address *"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              type="text"
+              placeholder={"Your Company Address"}
+            />
+            <Input
+              label="Website (optional)"
+              name="website"
+              value={formData.website}
+              onChange={handleChange}
+              type="text"
+              placeholder={"Your Company Website"}
+            />
+            <Input
+              label="Secret Answer *"
+              name="secretAnswer"
+              value={formData.secretAnswer}
+              onChange={handleChange}
               type="password"
+              placeholder={"Your Secret Answer"}
+            />
+            <Input
+              label="Password *"
               name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
+              type="password"
+              placeholder={"Your Password "}
             />
             <Input
-              label="Confirm Password"
-              type="password"
+              label="Confirm Password *"
               name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              type="password"
+              placeholder={"Confirm your password"}
             />
+
             <div className="mt-6">
-              <Button type="submit">Register</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Creating..." : "Register"}
+              </Button>
             </div>
           </form>
-          <div className="mt-4">
-            <h6>
-              Already have an account ?{" "}
-              <Link
-                to="/login"
-                className="hover:text-accent transition duration-300"
-              >
-                Login here
-              </Link>{" "}
-            </h6>
+
+          <div className="mt-4 text-center text-sm">
+            Already have an account?{" "}
+            <Link to="/login" className="hover:text-accent font-medium">
+              Login here
+            </Link>
           </div>
         </div>
       </div>

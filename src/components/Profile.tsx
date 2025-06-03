@@ -10,32 +10,26 @@ import {
   faUser,
   faCopy,
   faQrcode,
+  faGlobe,
+  faLocationPin,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { useAppSelector } from "../store/hooks";
+import { toast } from "react-toastify";
+
 export default function Profile() {
-  // Updated user data to match business card
-  const user = {
-    name: "John Smith",
-    title: "Managing Director",
-    company: "Your Company Name",
-    email: "john@company.com",
-    phone: "1121 45 5760-433",
-    phone2: "11218 6700-443",
-    website: "www.websttename.com",
-    infoWebsite: "inforwebstte.com",
-    address: "Your Company Address Goes Here New York City",
-    social: {
-      linkedin: "linkedin.com/in/johnsmith",
-      twitter: "twitter.com/johnsmith",
-      instagram: "instagram.com/johnsmith",
-    },
-    profileUrl: "company.com/johnsmith",
-  };
+  const user = useAppSelector((state) => state.auth.user);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(user.profileUrl);
-    alert("Profile link copied!");
+    if (user?.slug) {
+      //const url = `https://kaatin.vercel.app/${user.slug}`;
+      const url = `http://localhost:3000/card/${user.email}`;
+      navigator.clipboard.writeText(url);
+      toast.success("🔗 Profile link copied!");
+    }
   };
+
+  if (!user) return <p className="text-center">Loading profile...</p>;
 
   return (
     <div className="space-y-8">
@@ -49,45 +43,75 @@ export default function Profile() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Business Card Preview */}
           <div className="max-w-lg mx-auto bg-white p-8 rounded shadow border border-gray-200">
-            {/* Top Section: Name and Contact  */}
+            {/* Name & Contact Section */}
             <div className="flex flex-col md:flex-row mt-10 justify-between items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
-              {/* Left: Name and Title  */}
+              {/* Name & Title */}
               <div>
                 <h1 className="text-2xl uppercase font-light tracking-wider text-gray-800">
-                  JOHN<span className="font-semibold">SMITH</span>
+                  {user.firstname.toUpperCase()}
+                  <span className="font-semibold ml-1">
+                    {user.lastname.toUpperCase()}
+                  </span>
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">Managing Director</p>
+                <p className="text-sm text-gray-500 mt-1">{user.role}</p>
               </div>
 
-              {/* Divider for desktop  */}
+              {/* Divider */}
               <div className="hidden md:block w-px h-16 bg-gray-300"></div>
 
-              {/* Right: Contact Info  */}
+              {/* Contact Info */}
               <div className="text-sm text-gray-700 space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span>📞</span>
-                  <span>1121 45 6780 433</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span>📠</span>
-                  <span>1121 65 6710 443</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span>✉️</span>
-                  <span>info@website.com</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span>🌐</span>
-                  <span>www.websitename.com</span>
-                </div>
+                {user.phone && (
+                  <div className="flex items-center space-x-2">
+                    {/* <span>📞</span> */}
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      className="mr-3 text-gray-500"
+                    />
+                    <span>{user.phone}</span>
+                  </div>
+                )}
+                {user.email && (
+                  <div className="flex items-center space-x-2">
+                    {/* <span className="text-primary">✉️</span> */}
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="mr-3 text-gray-500"
+                    />
+                    <span>{user.email}</span>
+                  </div>
+                )}
+                {user.website && (
+                  <div className="flex items-center space-x-2">
+                    {/* <span>🌐</span> */}
+                    <FontAwesomeIcon
+                      icon={faGlobe}
+                      className="mr-3 text-gray-500"
+                    />
+                    <a
+                      href={`https://${user.website}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {user.website}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Bottom: Address  */}
-            <div className="mt-14 pt-4 border-t border-gray-100 text-center text-xs text-gray-500 flex items-center justify-center space-x-2">
-              <span>📍</span>
-              <span>YOUR COMPANY ADDRESS GOES HERE NEW YOURK CITY</span>
-            </div>
+            {/* Address */}
+            {user.address && (
+              <div className="mt-14 pt-4 border-t border-gray-100 text-center text-xs text-gray-500 flex items-center justify-center space-x-2">
+                {/* <span>📍</span> */}
+                <FontAwesomeIcon
+                  icon={faLocationPin}
+                  className="mr-3 text-dark"
+                />
+                <span>{user.address}</span>
+              </div>
+            )}
           </div>
 
           {/* Share Options */}
@@ -133,74 +157,48 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Social Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-3 text-primary">
-                Social Media
-              </h3>
-              <div className="flex space-x-4">
-                <a
-                  href={`https://${user.social.linkedin}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  <FontAwesomeIcon icon={faLinkedin} size="lg" />
-                </a>
-                <a
-                  href={`https://${user.social.twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-600"
-                >
-                  <FontAwesomeIcon icon={faTwitter} size="lg" />
-                </a>
-                <a
-                  href={`https://${user.social.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-pink-600 hover:text-pink-800"
-                >
-                  <FontAwesomeIcon icon={faInstagram} size="lg" />
-                </a>
+            {/* Optional Social Media */}
+            {/* {user.socialLinks && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3 text-primary">
+                  Social Media
+                </h3>
+                <div className="flex space-x-4">
+                  {user.socialLinks.linkedin && (
+                    <a
+                      href={user.socialLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <FontAwesomeIcon icon={faLinkedin} size="lg" />
+                    </a>
+                  )}
+                  {user.socialLinks.twitter && (
+                    <a
+                      href={user.socialLinks.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-600"
+                    >
+                      <FontAwesomeIcon icon={faTwitter} size="lg" />
+                    </a>
+                  )}
+                  {user.socialLinks.instagram && (
+                    <a
+                      href={user.socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-pink-600 hover:text-pink-800"
+                    >
+                      <FontAwesomeIcon icon={faInstagram} size="lg" />
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            )} */}
           </div>
         </div>
-      </div>
-
-      {/* Profile Stats */}
-      {/* <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold mb-4 text-primary">
-          Profile Activity
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard title="Total Views" value="1,240" trend="↑ 12%" />
-          <StatCard title="Shares" value="86" trend="↑ 3%" />
-          <StatCard title="Last Viewed" value="2h ago" />
-          <StatCard title="Profile Completeness" value="95%" />
-        </div>
-      </div> */}
-    </div>
-  );
-}
-
-// Reusable stat card component
-function StatCard({
-  title,
-  value,
-  trend,
-}: {
-  title: string;
-  value: string;
-  trend?: string;
-}) {
-  return (
-    <div className="bg-gray-50 p-4 rounded-lg">
-      <p className="text-sm text-gray-500">{title}</p>
-      <div className="flex items-baseline mt-1">
-        <p className="text-xl font-semibold">{value}</p>
-        {trend && <span className="ml-2 text-xs text-green-500">{trend}</span>}
       </div>
     </div>
   );

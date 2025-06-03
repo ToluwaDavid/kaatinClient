@@ -15,6 +15,10 @@ import Profile from "../components/Profile";
 import Editprofile from "../components/Editprofile";
 import Contact from "../components/Contact";
 import Settings from "../components/Settings";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { fetchProfile, logout } from "../store/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { setAuthToken } from "../services/api";
 
 //Define NavItems shapes and types
 type NavItems = {
@@ -68,6 +72,21 @@ const Dashboard = () => {
     },
   ];
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token || !isAuthenticated) {
+      navigate("/login"); // Redirect if not logged in
+      return;
+    }
+
+    dispatch(fetchProfile()); // Fetch the profile
+  }, [dispatch, isAuthenticated]);
+
   // SIDE EFFECTS
   // Persist active tab in localstorage
   useEffect(() => {
@@ -80,11 +99,20 @@ const Dashboard = () => {
     localStorage.setItem("activeTab", activeTab);
   }, [activeTab]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setAuthToken(token); // ✅ Restores token to Axios headers
+      dispatch(fetchProfile()); // ✅ Fetch user data into Redux
+    }
+  }, []);
+
   // EFFECT HANDLING
   //Handle switching tabs
   const handleNavigation = (tabId: string) => {
     if (tabId === "logout") {
-      console.log("Logout Successful");
+      dispatch(logout());
+      navigate("/login");
       return;
     }
     setActiveTab(tabId);
@@ -104,18 +132,20 @@ const Dashboard = () => {
     <div className="flex h-screen bg-gray-50">
       {/* SIDEBAR */}
       <div
-        className={`bg-white shadow-lg transition-all duration-300 ${
+        className={`bg-primary shadow-lg transition-all duration-300 ${
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
         {/* Sidebar Header and Button */}
         <div className="p-4 flex items-center justify-between border-b border-gray-200">
           {!isCollapsed && (
-            <h1 className="text-2xl font-bold text-accent">Kaatin</h1>
+            <h1 className="text-2xl font-bold text-white">
+              K<span className="text-accent">aa</span>d
+            </h1>
           )}
           <button
             onClick={toggleNavbar}
-            className="text-gray-500 hover:text-accent transition-colors py-6"
+            className="text-white hover:text-accent transition-colors py-6"
             aria-label={isCollapsed ? "Expand Navbar" : "Collapse Navbar"}
           >
             <FontAwesomeIcon
@@ -125,13 +155,13 @@ const Dashboard = () => {
         </div>
 
         {/* Button for the sidenavbar */}
-        <nav>
+        <nav className="mt-4">
           <ul>
             {navItems.map((item) => (
               <li key={item.id}>
                 <button
                   onClick={() => handleNavigation(item.id)}
-                  className={`w-full flex items-center p-3 mb-3  transition-colors ${
+                  className={`w-full text-white flex items-center p-3 mb-3 font-bold  transition-colors ${
                     activeTab === item.id
                       ? "bg-accent text-white"
                       : "text-gray-700 hover:bg-accent/10 hover:text-accent "
@@ -151,11 +181,11 @@ const Dashboard = () => {
         <nav className="mt-24 space-x-3">
           <ul>
             <li className="items-center p-3 mb-3 text-sm">
-              <button className="text-sm font-semibold text-gray-700">
-                Welcome,
+              <button className="text-sm font-semibold text-white">
+                Welcome,&nbsp;
               </button>
-              <button className="text-sm font-semibold text-gray-700">
-                Tolulope
+              <button className="text-sm font-semibold text-white">
+                {user?.firstname || "User"}
               </button>
             </li>
           </ul>
