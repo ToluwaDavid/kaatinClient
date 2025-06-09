@@ -23,7 +23,8 @@ export default function Profile() {
   const copyToClipboard = () => {
     if (user?.slug) {
       //const url = `https://kaatin.vercel.app/${user.slug}`;
-      const url = `https://kaatinserver-production.up.railway.app/card/${user.email}`;
+      //const url = `https://kaatinserver-production.up.railway.app/card/${user.email}`;
+        const url = `https://kaatin.vercel.app/card/${user.email}
       navigator.clipboard.writeText(url);
       toast.success("🔗 Profile link copied!");
     }
