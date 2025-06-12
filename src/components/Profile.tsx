@@ -129,10 +129,10 @@ export default function Profile() {
                   <FontAwesomeIcon icon={faCopy} className="mr-2" />
                   Copy Link
                 </button>
-                <button className="flex-1 border border-accent text-accent hover:bg-accent/10 py-2 px-4 rounded-lg flex items-center justify-center">
+{/*                 <button className="flex-1 border border-accent text-accent hover:bg-accent/10 py-2 px-4 rounded-lg flex items-center justify-center">
                   <FontAwesomeIcon icon={faQrcode} className="mr-2" />
                   QR Code
-                </button>
+                </button> */}
               </div>
             </div>
 
