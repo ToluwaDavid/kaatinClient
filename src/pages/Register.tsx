@@ -113,7 +113,7 @@ const Register = () => {
     <div>
       <Navbar />
       <div className="min-h-screen flex items-center justify-center bg-primary text-textPrimary">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md p-6">
           <h2 className="text-3xl font-bold mb-2 text-center">Register</h2>
           <p className="text-sm mb-4 text-center text-accent font-medium">
             Fields marked <span className="text-red-400 font-bold">*</span> are
