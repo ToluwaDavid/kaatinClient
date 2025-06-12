@@ -192,12 +192,14 @@ const Register = () => {
               placeholder={"Your Company Website"}
             />
             <Input
-              label="Secret Answer *"
+               label="Secret Answer * (This answer will be used when you want to recover or change your password)"
               name="secretAnswer"
               value={formData.secretAnswer}
               onChange={handleChange}
               type="password"
-              placeholder={"Your Secret Answer"}
+              placeholder={
+                "Your Secret Answer will be used for your password reset or recover process"
+              }
             />
             <Input
               label="Password *"
