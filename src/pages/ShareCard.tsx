@@ -38,7 +38,8 @@ const SharedCard: React.FC = () => {
         console.log(encodedEmail);
         //const response = await axios.get(`/card/${encodedEmail}`);
         const response = await axios.get(
-          `https://kaatinserver-production.up.railway.app/api/user/card/${email}`
+          //`https://kaatinserver-production.up.railway.app/api/user/card/${email}`
+            `https://kaatinserver.onrender.com/api/user/card/${email}`
         );
         console.log(response);
         setUser(response.data);
