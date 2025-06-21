@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://kaatinserver-production.up.railway.app/api",
+  // baseURL: "https://kaatinserver-production.up.railway.app/api",
+  baseURL: "https://kaatinserver.onrender.com/api",
   withCredentials: true,
 });
 
