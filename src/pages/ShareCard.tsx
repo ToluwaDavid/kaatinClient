@@ -65,7 +65,7 @@ const SharedCard: React.FC = () => {
           <div>
             <h1 className=" uppercase font-light tracking-wider text-gray-800">
               {user.firstname.toUpperCase()}
-              <span className="font-semibold ml-1">
+              <span className="font-bold ml-1">
                 {user.lastname.toUpperCase()}
               </span>
             </h1>
